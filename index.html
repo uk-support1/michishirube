@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f5f3ed" />
+    <title>みちしるべ — 自分にも、できることがある。</title>
+    <meta name="description" content="やりたいことを小さな一歩に分けて、できたら消していく。ゴールへの階段を、自分のペースで。" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icon-192.png" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="welcome" class="welcome" role="dialog" aria-modal="true" aria-labelledby="welcome-title" hidden>
+      <div id="welcome-card" class="welcome-card"></div>
+    </div>
+    <main class="app-shell">
+      <header class="hero">
+        <button id="show-history" class="text-button" type="button">これまでの記録 <span id="record-count">0</span></button>
+        <div class="hero-copy" id="top">
+          <p class="eyebrow" id="today-label">今日</p>
+          <p class="greeting" id="greeting" hidden></p>
+          <h1>自分にも、<br /><em>できることがある。</em></h1>
+          <p class="intro">大きな成果でなくて大丈夫。今日のあなたが動かした、小さな一歩を見つけていきましょう。</p>
+        </div>
+      </header>
+
+      <section id="wish-detail" class="wish-detail" aria-label="やりたいことの詳細"></section>
+
+      <section class="wishes" aria-labelledby="wishes-title">
+        <h2 id="wishes-title">やりたいこと</h2>
+        <p class="wishes-lead">「やるべきこと」ではなく、「やりたいこと」を。小さなことでも、まだ形になっていなくても大丈夫です。できた一歩は、消していきます。</p>
+        <form id="wish-form" class="inline-form">
+          <input id="wish-input" type="text" maxlength="80" placeholder="例：外の空気を吸いたい" aria-label="やりたいこと" />
+          <button class="secondary-button" type="submit">置く</button>
+        </form>
+        <p id="wish-message" class="wish-message" role="status" aria-live="polite"></p>
+        <div id="wish-list" class="wish-list"></div>
+        <p id="wish-total" class="wish-total" hidden></p>
+        <p id="sync-status" class="sync-status" role="status" aria-live="polite" hidden></p>
+        <p id="backup-reminder" class="backup-reminder" hidden></p>
+      </section>
+
+      <section id="revisit" class="revisit" aria-labelledby="revisit-title" hidden>
+        <p class="step">これまでの足あと</p>
+        <h2 id="revisit-title">以前のあなたは、こんなことをしていました</h2>
+        <p class="revisit-date"><time id="revisit-time"></time></p>
+        <dl id="revisit-body" class="revisit-body"></dl>
+        <button id="revisit-next" class="secondary-button" type="button">別の記録を見る</button>
+      </section>
+
+      <section class="reflection" aria-labelledby="reflection-title">
+        <div class="section-heading">
+          <p class="step">01 / 03</p>
+          <h2 id="reflection-title">今日、自分で決めたことは？</h2>
+          <p>「起きる」「返信する」「少し休む」も、あなたの決断です。</p>
+        </div>
+        <textarea id="decision" rows="3" maxlength="280" placeholder="例：散歩に行く代わりに、まず靴を履いて外に出ることにした"></textarea>
+        <p class="hint"><span id="decision-count">0</span>/280</p>
+      </section>
+
+      <section class="reflection tone-blue" aria-labelledby="done-title">
+        <div class="section-heading">
+          <p class="step">02 / 03</p>
+          <h2 id="done-title">今日、できたことは？</h2>
+          <p>途中まででも、予定と違っても。できた部分に目を向けてみます。</p>
+        </div>
+        <textarea id="done" rows="3" maxlength="280" placeholder="例：洗濯機を回せた。連絡を一通返せた。"></textarea>
+        <p class="hint"><span id="done-count">0</span>/280</p>
+      </section>
+
+      <section class="reflection tone-peach" aria-labelledby="idea-title">
+        <div class="section-heading">
+          <p class="step">03 / 03</p>
+          <h2 id="idea-title">どんな工夫や助けがあった？</h2>
+          <p>あなたの力だけでなく、道具・環境・人の助けも大切な味方です。</p>
+        </div>
+        <textarea id="idea" rows="3" maxlength="280" placeholder="例：タイマーを10分にした。友だちに「やる」と伝えた。"></textarea>
+        <p class="hint"><span id="idea-count">0</span>/280</p>
+      </section>
+
+      <section class="kindness" aria-label="ひとことメモ">
+        <p>うまくいかなかった日も、記録しなくていい日もあります。<br />ここは自分を採点する場所ではありません。</p>
+      </section>
+
+      <div class="actions">
+        <button id="save-record" class="primary-button" type="button">この振り返りを残す <span aria-hidden="true">→</span></button>
+        <p id="save-message" class="save-message" role="status" aria-live="polite"></p>
+      </div>
+    </main>
+
+    <dialog id="history-dialog" aria-labelledby="history-title">
+      <div class="dialog-head">
+        <div>
+          <p class="eyebrow">あなたの足あと</p>
+          <h2 id="history-title">これまでの記録</h2>
+        </div>
+        <button id="close-history" class="close-button" type="button" aria-label="閉じる">×</button>
+      </div>
+      <p id="history-message" class="history-message" role="status" aria-live="polite"></p>
+      <div id="history-list" class="history-list"></div>
+      <div class="dialog-actions">
+        <button id="export-records" class="secondary-button" type="button">ファイルに保存</button>
+        <label class="secondary-button file-label">ファイルから読み込む<input id="import-records" type="file" accept="application/json" /></label>
+      </div>
+      <div class="profile-box">
+        <label for="nickname-input">ニックネーム（あいさつに使います。この端末の中にだけ保存されます）</label>
+        <div class="inline-form"><input id="nickname-input" type="text" maxlength="20" placeholder="空白でも大丈夫です" /><button id="nickname-save" class="secondary-button" type="button">変更</button></div>
+      </div>
+      <div class="backup-box">
+        <p class="backup-lead">別のブラウザや端末に移すとき、控えを残すときは、こちらが使えます。</p>
+        <div class="dialog-actions"><button id="copy-backup" class="secondary-button" type="button">すべての記録をコピー</button></div>
+        <textarea id="backup-text" rows="3" placeholder="移したい先で、コピーした内容をここに貼り付けて、下のボタンを押します" aria-label="コピーした記録の貼り付け欄"></textarea>
+        <div class="dialog-actions"><button id="paste-backup" class="secondary-button" type="button">貼り付けた内容を読み込む</button></div>
+      </div>
+      <p class="data-note">記録はこの端末のブラウザ内だけに保存されます。ブラウザのデータを消すと記録も消えるので、ときどき「すべての記録をコピー」で控えを残しておくと安心です（振り返りもやりたいことも入ります）。</p>
+    </dialog>
+    <template id="history-item-template">
+      <article class="history-item">
+        <div class="history-item-head"><time></time><span class="history-item-actions"><button class="edit-button" type="button">編集</button><button class="delete-button" type="button">削除</button></span></div>
+        <dl></dl>
+      </article>
+    </template>
+    <script src="app.js"></script>
+  </body>
+</html>

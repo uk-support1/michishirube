@@ -1,0 +1,16 @@
+{
+  "name": "みちしるべ — 自分にも、できることがある。",
+  "short_name": "みちしるべ",
+  "description": "やりたいことを小さな一歩に分けて、できたら消していく。ゴールへの階段を、自分のペースで。",
+  "lang": "ja",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f3ed",
+  "theme_color": "#f5f3ed",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
