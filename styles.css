@@ -140,3 +140,7 @@ h1 em { background:linear-gradient(90deg, #ee6c4d, #d9487a 58%, #8a5cf6); -webki
 .guide-no { flex:none; display:grid; place-items:center; width:30px; height:30px; border-radius:50%; background:var(--ink); color:#fff; font-size:.85rem; font-weight:700; }
 .share-icon { display:inline-block; width:1.15em; height:1.15em; vertical-align:-.2em; color:#2f6fd6; }
 .profile-box { margin-top:16px; padding-top:14px; border-top:1px solid var(--line); display:grid; gap:8px; }.profile-box label { color:var(--muted); font-size:.8rem; }
+
+.goal-row { position:relative; z-index:1; display:flex; flex-wrap:wrap; align-items:center; gap:4px 14px; margin-top:8px; }.goal-row .goal-reach { margin-top:0; }
+.goal-drop { min-height:44px; padding:0 4px; border:0; background:transparent; color:#5a3a2e; font-size:.85rem; text-decoration:underline; text-underline-offset:3px; }
+.del-button { width:34px; color:#8b5242; font-size:1.2rem; }

@@ -245,6 +245,19 @@ function moveStep(wish, step, delta) {
   const again = document.querySelector('[data-step="' + step.id + '"]:not(:disabled)');
   if (again) again.focus();
 }
+function deleteStep(wish, step) {
+  const list = getWishes(), target = findWish(list, wish.id); if (!target) return;
+  const index = target.steps.findIndex((item) => item.id === step.id); if (index < 0) return;
+  const [removed] = target.steps.splice(index, 1);
+  if (!writeWishes(list)) return;
+  renderWishes(); renderDetail();
+  wishMessage("1段を消しました。", () => {
+    const current = getWishes(), back = findWish(current, wish.id);
+    if (!back || back.steps.some((item) => item.id === removed.id)) return;
+    back.steps.splice(Math.min(index, back.steps.length), 0, removed);
+    if (writeWishes(current)) { renderWishes(); renderDetail(); wishMessage("戻しました。"); } else wishMessage("うまく戻せませんでした。");
+  });
+}
 function moveButton(wish, step, delta, symbol, hint, disabled) {
   const button = document.createElement("button"); button.type = "button"; button.className = "move-button";
   button.textContent = symbol; button.disabled = disabled; button.dataset.step = step.id;
@@ -270,6 +283,10 @@ function stairRow(wish, step, index, total) {
   move.append(
     moveButton(wish, step, 1, "↑", "ひとつ上へ（あとにまわす）", index === total - 1),
     moveButton(wish, step, -1, "↓", "ひとつ下へ（さきにする）", index === 0));
+  const del = document.createElement("button"); del.type = "button"; del.className = "move-button del-button"; del.textContent = "×";
+  del.setAttribute("aria-label", "「" + step.text + "」を消す");
+  del.addEventListener("click", () => deleteStep(wish, step));
+  move.append(del);
   li.append(number, body, move);
   return li;
 }
@@ -423,7 +440,10 @@ function buildDetail(wish) {
   const reach = document.createElement("button"); reach.type = "button"; reach.className = "goal-reach";
   reach.textContent = wish.reachedAt ? "ゴールにとどきました ✨（戻す）" : "ゴールにとどいた！";
   reach.addEventListener("click", () => changeWishes((list) => { const target = findWish(list, wish.id); if (target) target.reachedAt = target.reachedAt ? null : new Date().toISOString(); }, wish.reachedAt ? "戻しました。" : "ゴールにとどきました。ここまで来たのは、あなたの行動です。"));
-  goal.append(goalLabel, title, reach);
+  const drop = document.createElement("button"); drop.type = "button"; drop.className = "goal-drop"; drop.textContent = "いらなくなった（消す）";
+  drop.addEventListener("click", () => deleteWish(wish, () => { location.hash = ""; }));
+  const goalRow = document.createElement("div"); goalRow.className = "goal-row"; goalRow.append(reach, drop);
+  goal.append(goalLabel, title, goalRow);
   if (wish.reachedAt) goal.append(sparkles());
   const message = document.createElement("p"); message.id = "wish-detail-message"; message.className = "wish-message"; message.setAttribute("role", "status"); message.setAttribute("aria-live", "polite");
 
@@ -473,9 +493,7 @@ function buildDetail(wish) {
   const park = document.createElement("button"); park.type = "button"; park.className = "link-button";
   park.textContent = wish.parked ? "また取り出す" : "いまは寝かせておく";
   park.addEventListener("click", () => changeWishes((list) => { const target = findWish(list, wish.id); if (target) target.parked = !target.parked; }, wish.parked ? "取り出しました。" : "寝かせました。いつでも戻せます。"));
-  const remove = document.createElement("button"); remove.type = "button"; remove.className = "link-button danger"; remove.textContent = "削除";
-  remove.addEventListener("click", () => deleteWish(wish, () => { location.hash = ""; }));
-  actions.append(park, remove);
+  actions.append(park);
   const moreHead = document.createElement("h3"); moreHead.textContent = "このゴールについて";
   page.append(back, goal, message, ...(art ? [art] : []), stairsHead, stairsNote, form, stairs, moreHead,
     field("種類", kind),

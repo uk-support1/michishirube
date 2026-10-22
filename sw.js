@@ -1,5 +1,5 @@
 // 画面ファイルだけを端末にキャッシュします。記録データ（localStorage）には触れません。
-const cacheName = "michishirube-shell-v14";
+const cacheName = "michishirube-shell-v15";
 const shell = ["./", "index.html", "styles.css", "app.js", "manifest.webmanifest", "icon.svg", "icon-192.png", "icon-512.png"];
 
 self.addEventListener("install", (event) => {
