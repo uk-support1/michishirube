@@ -258,6 +258,25 @@ function deleteStep(wish, step) {
     if (writeWishes(current)) { renderWishes(); renderDetail(); wishMessage("戻しました。"); } else wishMessage("うまく戻せませんでした。");
   });
 }
+function stepEditor(wish, step) {
+  const form = document.createElement("form"); form.className = "step-editor";
+  const input = document.createElement("input"); input.type = "text"; input.maxLength = 80; input.value = step.text; input.setAttribute("aria-label", "段の名前");
+  const row = document.createElement("div"); row.className = "step-editor-actions";
+  const save = document.createElement("button"); save.type = "submit"; save.className = "secondary-button"; save.textContent = "残す";
+  const cancel = document.createElement("button"); cancel.type = "button"; cancel.className = "secondary-button"; cancel.textContent = "やめる";
+  cancel.addEventListener("click", () => renderDetail());
+  const drop = document.createElement("button"); drop.type = "button"; drop.className = "link-button danger"; drop.textContent = "この段を消す";
+  drop.addEventListener("click", () => deleteStep(wish, step));
+  row.append(save, cancel, drop); form.append(input, row);
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const text = input.value.trim().slice(0, 80);
+    if (!text) { wishMessage("空白にはできません。いらなくなったときは「この段を消す」を使えます。"); return; }
+    if (text === step.text) { renderDetail(); return; }
+    changeWishes((list) => { const target = findWish(list, wish.id)?.steps.find((item) => item.id === step.id); if (target) target.text = text; }, "直しました。");
+  });
+  return form;
+}
 function moveButton(wish, step, delta, symbol, hint, disabled) {
   const button = document.createElement("button"); button.type = "button"; button.className = "move-button";
   button.textContent = symbol; button.disabled = disabled; button.dataset.step = step.id;
@@ -283,10 +302,10 @@ function stairRow(wish, step, index, total) {
   move.append(
     moveButton(wish, step, 1, "↑", "ひとつ上へ（あとにまわす）", index === total - 1),
     moveButton(wish, step, -1, "↓", "ひとつ下へ（さきにする）", index === 0));
-  const del = document.createElement("button"); del.type = "button"; del.className = "move-button del-button"; del.textContent = "×";
-  del.setAttribute("aria-label", "「" + step.text + "」を消す");
-  del.addEventListener("click", () => deleteStep(wish, step));
-  move.append(del);
+  const pencil = document.createElement("button"); pencil.type = "button"; pencil.className = "move-button edit-step-button"; pencil.textContent = "✎";
+  pencil.setAttribute("aria-label", "「" + step.text + "」を直す・消す");
+  pencil.addEventListener("click", () => { li.classList.add("editing"); body.replaceChildren(stepEditor(wish, step)); body.querySelector("input[type=text]").focus(); });
+  move.append(pencil);
   li.append(number, body, move);
   return li;
 }
